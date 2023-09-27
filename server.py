@@ -1,5 +1,7 @@
 #  coding: utf-8 
-import socketserver
+import socketserver, os, mimetypes 
+
+
 
 # Copyright 2013 Abram Hindle, Eddie Antonio Santos
 # 
@@ -31,7 +33,62 @@ class MyWebServer(socketserver.BaseRequestHandler):
     
     def handle(self):
         self.data = self.request.recv(1024).strip()
-        print ("Got a request of: %s\n" % self.data)
+
+        if not self.data:
+            return
+        if len(self.data) < 3:
+            output = "HTTP/1.1 400 Bad Request\r\n\r\n"
+            self.request.sendall(output.encode("utf-8"))
+            return
+
+        request = self.data.decode("utf-8")
+        request_data = request.splitlines()  
+
+        check_css = False
+        check_js = False
+
+        data = request_data[0].split(" ")
+        r_command = data[0]
+        r_url =  data[1]
+        r_http = data[2]
+
+
+        if r_command != "GET":
+            output = r_http + " 405 Method Not Allowed\r\n" + "\r\n"
+            self.request.send(output.encode("utf-8"))
+
+
+        else:
+            if(r_url[-5:] != ".html" and r_url[-1] != "/" and r_url[-4:] != ".css"):
+                output = r_http + " 301 Moved Permanently\r\n" + "Location: " + r_url + "/\r\n"
+                self.request.send(output.encode("utf-8"))
+            if r_url[-1:] == ".js":
+                r_url = r_url + "index.html"
+            if r_url[-4:] == ".css":
+                check_css = True
+            if r_url[-4:] == ".js":
+                check_js = True
+
+            try:
+                file = open(os.getcwd() + "/www" + r_url, "rb")
+                html_data = file.read()
+                file.close()
+
+            except FileNotFoundError:
+                output = r_http + " 404 Not Found\r\n" + "\r\n"
+                self.request.send(output.encode("utf-8"))
+                
+            else:
+                
+
+                if check_css:
+                    output = r_http + " 200 OK\r\n" + "Content-Type: text/css\r\n" + "\r\n"
+                else:
+                    output = r_http + " 200 OK\r\n" + "Content-Type: text/html\r\n" + "\r\n"
+                self.request.send(output.encode("utf-8"))
+                self.request.sendall(html_data)
+
+        #print ("Got a request of: %s\n" % self.data)
         self.request.sendall(bytearray("OK",'utf-8'))
 
 if __name__ == "__main__":
