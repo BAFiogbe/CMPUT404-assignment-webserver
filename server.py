@@ -49,6 +49,9 @@ class MyWebServer(socketserver.BaseRequestHandler):
             output = r_http + " 405 Method Not Allowed\r\n" + "\r\n"
             self.request.send(output.encode("utf-8"))
             return
+        
+        if '..' in r_url:  # handle home directory
+            self.request.sendall(bytearray(f'HTTP/1.0 404 NOT FOUND\r\n\n', 'utf-8'))
 
         else:
             # Handling redirection for missing trailing slashes.
