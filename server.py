@@ -1,4 +1,6 @@
-import socketserver, os, mimetypes 
+#Import libraries
+import socketserver, os
+#import mimetypes 
 # Copyright 2013 Abram Hindle, Eddie Antonio Santos
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,13 +39,13 @@ class MyWebServer(socketserver.BaseRequestHandler):
 
         request = self.data.decode("utf-8")
         request_data = request.splitlines()  
-
         check_css = False
 
+        # Split the request line into its components
         data = request_data[0].split(" ")
-        r_command = data[0]
-        r_url =  data[1]
-        r_http = data[2]
+        r_command = data[0]  # HTTP Method (GET, POST, HEAD, etc.)
+        r_url =  data[1]     # Requested URL
+        r_http = data[2]     # HTTP version
 
         if r_command != "GET":
             output = r_http + " 405 Method Not Allowed\r\n" + "\r\n"
