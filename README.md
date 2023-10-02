@@ -7,6 +7,8 @@ See requirements.org (plain-text) for a description of the project.
 
 Make a simple webserver.
 
+Assignment Submission: Brandon A. Fiogbe
+
 Contributors / Licensing
 ========================
 
@@ -18,6 +20,7 @@ server.py contains contributions from:
 * Eddie Antonio Santos
 * Jackson Z Chang
 * Mandy Meindersma 
+* Brandon Fiogbe
 
 But the server.py example is derived from the python documentation
 examples thus some of the code is Copyright © 2001-2013 Python
